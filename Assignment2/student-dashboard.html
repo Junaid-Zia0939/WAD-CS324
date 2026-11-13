@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Dashboard | InternshipSeekers</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><img class="brand-mark" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHJzRNlv8xf5Ji1bQKXSVeaSp5lzoGmCeJbFwc-tm4Uw&amp;s" alt="InternshipSeekers icon">InternshipSeekers</a>
+    <nav class="nav"><a href="index.html">Home</a><a class="active" href="student-dashboard.html">Dashboard</a><a href="#applications">Applications</a><a href="profile-builder.html">Profile</a></nav>
+    <div class="header-actions"><a class="button small" href="profile-builder.html">Edit Profile</a><button class="button small logout-button" type="button">Log out</button></div>
+  </header>
+  <main class="container main dashboard-content" id="student-dashboard">
+    <section class="welcome"><div><span class="eyebrow">Student Dashboard</span><h1 id="welcome-title">Welcome to your dashboard</h1><p class="muted" id="profile-summary">Add your details to see your profile here.</p></div></section>
+    <section class="dashboard-stats">
+      <article class="card stat"><span>Profile completion</span><strong id="profile-completion">0%</strong><a href="profile-builder.html">Complete your profile →</a></article>
+      <article class="card stat"><span>Saved opportunities</span><strong id="saved-count">0</strong><a href="index.html#internships">Browse internships →</a></article>
+      <article class="card stat"><span>Applications</span><strong id="application-count">0</strong><a href="#applications">Track applications →</a></article>
+    </section>
+    <section class="internship-browser">
+      <section class="dashboard-section">
+        <div class="section-title"><h2 id="recommended-title">Recommended internships</h2><p>Matches consider your skills, degree, semester, experience, location, work setup, and availability.</p></div>
+        <div class="job-list" id="internships-list"></div>
+      </section>
+      <aside class="internship-preview card" id="internship-details">
+        <p class="empty-state" id="detail-placeholder">Select “View details” on an internship to see its full information here.</p>
+        <div id="detail-content" hidden>
+          <div class="detail-dialog-header"><div><span class="eyebrow">Internship details</span><p class="muted" id="detail-company"></p></div></div>
+          <h2 id="detail-title"></h2>
+          <p class="detail-meta" id="detail-meta"></p>
+          <p class="match-score" id="detail-match"></p>
+          <section><h3>About this internship</h3><p id="detail-description"></p></section>
+          <section><h3>What you will do</h3><ul id="detail-responsibilities"></ul></section>
+          <section><h3>What we are looking for</h3><ul id="detail-requirements"></ul></section>
+          <section><h3>Skills</h3><p id="detail-skills"></p></section>
+          <section><h3>How to apply</h3><p id="detail-application"></p></section>
+          <div class="detail-dialog-actions"><button class="button" id="detail-apply" type="button">Apply now</button><button class="button" id="detail-save" type="button">Save role</button></div>
+        </div>
+      </aside>
+    </section>
+    <section class="dashboard-section card" id="applications">
+      <h2 id="applications-title">Recent Applications</h2>
+      <p class="muted" id="applications-empty">You have not applied to any internships yet.</p>
+      <ul id="applications-list"></ul>
+    </section>
+    <button class="button small" id="clear-profile" type="button">Clear Profile</button>
+  </main>
+  <footer class="container footer"><div class="copyright">Internship Seekers by QAU Students · © 2026 InternshipSeekers</div></footer>
+  <script>
+    const activeAccount = JSON.parse(sessionStorage.getItem('internshipSeekersActiveAccount') || 'null');
+    if (!activeAccount || activeAccount.role !== 'student') window.location.replace('login.html');
+    document.querySelector('.logout-button').addEventListener('click', () => {
+      sessionStorage.removeItem('internshipSeekersActiveAccount');
+      window.location.href = 'login.html';
+    });
+    const profile = JSON.parse(localStorage.getItem('internshipSeekersProfile') || '{}');
+    const fullName = [profile.first, profile.last].filter(Boolean).join(' ');
+    document.getElementById('welcome-title').textContent = fullName ? `Welcome back, ${fullName}` : 'Welcome to your dashboard';
+    const summary = [profile.degree, profile.university].filter(Boolean).join(' · ');
+    const skills = (profile.skills || []).map((skill) => skill.name).filter(Boolean);
+    document.getElementById('profile-summary').textContent = [summary, skills.length ? `Skills: ${skills.join(', ')}` : ''].filter(Boolean).join(' — ') || 'Add your details to see your profile here.';
+    const fields = ['first', 'last', 'university', 'degree', 'semester', 'graduation', 'experience', 'preferredLocation', 'preferredWorkMode', 'availableFrom', 'linkedin', 'github', 'portfolio'];
+    const completed = fields.filter((field) => profile[field]).length + (skills.length ? 1 : 0);
+    document.getElementById('profile-completion').textContent = `${Math.round(completed / (fields.length + 1) * 100)}%`;
+    const internships = [
+      { id: 'web-intern', title: 'Frontend Development Intern', company: 'NETSOL Technologies', location: 'Lahore', workMode: 'Hybrid', duration: '12 weeks', compensation: 'PKR 45,000 per month', deadline: 'November 15, 2026', skills: ['JavaScript', 'React', 'HTML', 'CSS'], description: 'Build accessible web features with a product engineering team and ship improvements used by real customers.', responsibilities: ['Implement and refine responsive interface components.', 'Work with designers and engineers during code reviews.', 'Test features and document what you build.'], requirements: ['Currently enrolled in a computer science or related degree.', 'Comfortable with HTML, CSS, and JavaScript fundamentals.', 'A portfolio or class project is helpful.'], application: 'Submit your profile and portfolio through the Apply now button. The hiring team will contact shortlisted applicants by email.' },
+      { id: 'data-intern', title: 'Data Analyst Intern', company: 'Teyzix Core', location: 'Pakistan', workMode: 'Remote', duration: '10 weeks', compensation: 'PKR 40,000 per month', deadline: 'November 20, 2026', skills: ['Python', 'SQL', 'Data Analysis'], description: 'Explore product datasets, prepare clear reports, and help teams make evidence based decisions.', responsibilities: ['Clean and organize datasets for analysis.', 'Build recurring reports and visual summaries.', 'Present findings to product and operations teams.'], requirements: ['Currently enrolled in data science, statistics, computer science, or a related program.', 'Basic understanding of SQL and spreadsheets.', 'Curiosity and attention to detail.'], application: 'Submit your profile and a short note about a project where you used data. Shortlisted applicants will be contacted by email.' },
+      { id: 'design-intern', title: 'Product Design Intern', company: '10Pearls', location: 'Karachi', workMode: 'Hybrid', duration: '12 weeks', compensation: 'PKR 35,000 per month', deadline: 'November 25, 2026', skills: ['Figma', 'Design', 'Communication'], description: 'Support user research and turn early ideas into thoughtful, testable interface designs.', responsibilities: ['Help plan interviews and summarize user feedback.', 'Create wireframes and interactive prototypes in Figma.', 'Collaborate with product and engineering teammates.'], requirements: ['Currently enrolled in a design or related degree.', 'A basic portfolio showing process and problem solving.', 'Clear communication and openness to feedback.'], application: 'Submit your profile and a portfolio link. The team will review applications and contact shortlisted candidates.' }
+    ];
+    const focusedRoles = [
+      { id: 'python-ops', title: 'Python Automation Intern', company: 'Teyzix Core', skill: 'Python', focus: 'Build small scripts that help the operations team validate and organize research data.' },
+      { id: 'javascript-web', title: 'JavaScript Web Intern', company: 'NETSOL Technologies', skill: 'JavaScript', focus: 'Help implement and test interactive features for a customer-facing website.' },
+      { id: 'sql-reporting', title: 'SQL Reporting Intern', company: 'Teyzix Core', skill: 'SQL', focus: 'Write and refine queries that support weekly product and business reports.' },
+      { id: 'react-ui', title: 'React Interface Intern', company: 'NETSOL Technologies', skill: 'React', focus: 'Build reusable React interface components alongside a frontend mentor.' },
+      { id: 'figma-design', title: 'Figma Design Intern', company: '10Pearls', skill: 'Figma', focus: 'Turn wireframes into clear prototypes and help prepare designs for usability reviews.' },
+      { id: 'analysis-research', title: 'Data Analysis Intern', company: 'Teyzix Core', skill: 'Data Analysis', focus: 'Explore a focused dataset and summarize useful patterns for the project team.' }
+    ];
+    focusedRoles.forEach((role) => internships.push({
+      id: role.id, title: role.title, company: role.company, location: 'Pakistan', workMode: 'Hybrid',
+      duration: '10 weeks', compensation: 'PKR 35,000 per month', deadline: 'November 30, 2026',
+      skills: [role.skill], description: role.focus,
+      responsibilities: [`Use ${role.skill} on a scoped project with guidance from a team mentor.`, 'Share progress and ask for feedback during weekly check-ins.', 'Document the work and present a short final summary.'],
+      requirements: [`Currently enrolled in a relevant degree program.`, `Basic coursework or project experience with ${role.skill}.`, 'Able to communicate progress and learn from feedback.'],
+      application: `Submit your profile and briefly describe a class project or exercise where you used ${role.skill}.`
+    }));
+    internships.push(...JSON.parse(localStorage.getItem('internshipSeekersEmployerRoles') || '[]'));
+    internships.forEach((job) => {
+      if (!job.minSemester) job.minSemester = 2;
+      if (!job.maxSemester) job.maxSemester = 8;
+      if (!job.degreeKeywords) job.degreeKeywords = ['computer science', 'information technology', 'software', 'engineering', 'data', 'statistics'];
+      if (!job.requiredSkillLevel) job.requiredSkillLevel = 1;
+    });
+    internships.find((job) => job.id === 'web-intern').minSemester = 3;
+    internships.find((job) => job.id === 'data-intern').minSemester = 3;
+    internships.find((job) => job.id === 'design-intern').degreeKeywords = ['design', 'multimedia', 'fine arts', 'computer science'];
+    internships.find((job) => job.id === 'figma-design').degreeKeywords = ['design', 'multimedia', 'fine arts', 'computer science'];
+    const skillAliases = { js: 'javascript', 'java script': 'javascript', reactjs: 'react', 'react js': 'react', html5: 'html', css3: 'css', 'data analytics': 'data analysis', 'data analysing': 'data analysis', 'user interface design': 'design' };
+    const normalizeSkill = (value) => {
+      const normalized = value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      return skillAliases[normalized] || normalized;
+    };
+    const profileSkills = (profile.skills || []).map((skill) => normalizeSkill(skill.name));
+    const studentSkills = (profile.skills || []).map((skill) => ({ name: normalizeSkill(skill.name), level: Number(skill.level) || 0 }));
+    const studentSkillLevel = (name) => studentSkills.filter((skill) => skill.name === normalizeSkill(name)).reduce((highest, skill) => Math.max(highest, skill.level), 0);
+    const matchingSkillCount = (job) => job.skills.filter((skill) => studentSkillLevel(skill) >= job.requiredSkillLevel).length;
+    const skillFit = (job) => job.skills.reduce((total, skill) => total + Math.min(studentSkillLevel(skill) / job.requiredSkillLevel, 1), 0) / job.skills.length;
+    const semester = Number(profile.semester) || null;
+    const experienceText = (profile.experience || '').toLowerCase();
+    const degreeFit = (job) => {
+      if (!job.degreeKeywords.length) return 1;
+      if (!profile.degree) return 0.5;
+      return job.degreeKeywords.some((keyword) => profile.degree.toLowerCase().includes(keyword)) ? 1 : 0.2;
+    };
+    const experienceSkillCount = (job) => job.skills.filter((skill) => experienceText.includes(skill.toLowerCase())).length;
+    const experienceBonus = (job) => {
+      if (!experienceText.trim()) return 0;
+      const skillsBonus = experienceSkillCount(job) / job.skills.length * 0.03;
+      const keywords = (job.experienceKeywords || '').toLowerCase().split(/[^a-z0-9]+/).filter((word) => word.length > 3);
+      const keywordMatches = keywords.filter((word) => experienceText.includes(word)).length;
+      const roleBonus = keywords.length ? keywordMatches / keywords.length * 0.02 : 0;
+      return Math.min(0.05, skillsBonus + roleBonus);
+    };
+    const semesterFits = (job) => !semester || (semester >= job.minSemester && semester <= job.maxSemester);
+    const availabilityFits = (job) => !profile.availableFrom || !job.startMonth || profile.availableFrom <= job.startMonth;
+    const preferenceFit = (job) => {
+      const preferences = [];
+      if (profile.preferredWorkMode) preferences.push(job.workMode === profile.preferredWorkMode ? 1 : 0.5);
+      if (profile.preferredLocation) {
+        const locationMatches = job.workMode === 'Remote' || job.location.toLowerCase() === 'pakistan' || job.location.toLowerCase().includes(profile.preferredLocation.toLowerCase());
+        preferences.push(locationMatches ? 1 : 0.5);
+      }
+      return preferences.length ? preferences.reduce((total, value) => total + value, 0) / preferences.length : 1;
+    };
+    const list = document.getElementById('internships-list');
+    const savedJobs = JSON.parse(localStorage.getItem('internshipSeekersSavedJobs') || '[]');
+    const applications = JSON.parse(localStorage.getItem('internshipSeekersApplications') || '[]');
+    const recommendedInternships = internships
+      .map((job) => {
+        const score = skillFit(job) * 0.65 + degreeFit(job) * 0.2 + preferenceFit(job) * 0.15 + experienceBonus(job);
+        return { ...job, score: Math.min(100, Math.round(score * 100)), matchingSkills: matchingSkillCount(job) };
+      })
+      .filter((job) => semesterFits(job) && availabilityFits(job) && job.score >= 65)
+      .sort((a, b) => b.score - a.score);
+    if (!recommendedInternships.length) {
+      const empty = document.createElement('p');
+      empty.className = 'empty-state';
+      empty.textContent = profileSkills.length
+        ? 'No internships match your semester and profile yet. Add relevant skills or experience to improve your matches.'
+        : 'Add skills to your profile to receive internship recommendations.';
+      const editLink = document.createElement('a');
+      editLink.className = 'button small';
+      editLink.href = 'profile-builder.html#skills-title';
+      editLink.textContent = 'Update skills';
+      empty.append(document.createElement('br'), editLink);
+      list.append(empty);
+    }
+    recommendedInternships.forEach((job) => {
+        const card = document.createElement('article');
+        card.className = 'internship-card';
+        card.dataset.jobId = job.id;
+        const row = document.createElement('div');
+        row.className = 'job-row';
+        const details = document.createElement('div');
+        const title = document.createElement('h3');
+        title.className = 'job-title';
+        title.textContent = job.title;
+        const meta = document.createElement('p');
+        meta.className = 'internship-info';
+        const company = document.createElement('span');
+        company.className = 'company-name';
+        company.textContent = job.company;
+        const city = document.createElement('span');
+        city.className = 'city-name';
+        city.textContent = job.location;
+        const workType = document.createElement('span');
+        workType.className = 'work-type';
+        workType.textContent = job.workMode;
+        const duration = document.createElement('span');
+        duration.className = 'duration';
+        duration.textContent = job.duration;
+        const pay = document.createElement('span');
+        pay.className = 'pay';
+        pay.textContent = job.compensation;
+        meta.append(company, city, workType, duration, pay);
+        if (job.startMonth) {
+          const start = document.createElement('span');
+          start.className = 'duration';
+          start.textContent = `Starts ${job.startMonth}`;
+          meta.append(start);
+        }
+        const deadline = document.createElement('p');
+        deadline.className = 'apply-date';
+        deadline.textContent = `Apply by ${job.deadline}`;
+        const score = document.createElement('span');
+        score.className = 'match-score';
+        score.textContent = `${job.score}% overall match`;
+        details.append(title, meta, deadline);
+        row.append(details, score);
+        const description = document.createElement('div');
+        description.className = 'internship-detail-content';
+        const text = document.createElement('p');
+        text.textContent = job.description;
+        const skillLine = document.createElement('p');
+        skillLine.className = 'job-meta';
+        skillLine.textContent = `Skills: ${job.skills.join(', ')}`;
+        const actions = document.createElement('div');
+        actions.className = 'internship-actions';
+        const view = document.createElement('button');
+        view.className = 'button small';
+        view.textContent = 'View details';
+        view.addEventListener('click', () => openInternshipDetails(job));
+        const apply = document.createElement('button');
+        apply.className = 'button small';
+        apply.textContent = applications.some((item) => item.id === job.id) ? 'Applied' : 'Apply now';
+        apply.disabled = applications.some((item) => item.id === job.id);
+        apply.addEventListener('click', () => {
+          applications.push({ id: job.id, title: job.title, company: job.company, status: 'Submitted' });
+          localStorage.setItem('internshipSeekersApplications', JSON.stringify(applications));
+          window.location.reload();
+        });
+        const save = document.createElement('button');
+        save.className = 'button small';
+        save.textContent = savedJobs.includes(job.id) ? 'Saved' : 'Save role';
+        save.addEventListener('click', () => {
+          const updated = savedJobs.includes(job.id) ? savedJobs.filter((id) => id !== job.id) : [...savedJobs, job.id];
+          localStorage.setItem('internshipSeekersSavedJobs', JSON.stringify(updated));
+          window.location.reload();
+        });
+        actions.append(view, apply, save);
+        description.append(text, skillLine, actions);
+        card.append(row, description);
+        list.append(card);
+      });
+    let selectedInternship = null;
+    function fillList(elementId, entries) {
+      const element = document.getElementById(elementId);
+      element.replaceChildren();
+      entries.forEach((entry) => {
+        const item = document.createElement('li');
+        item.textContent = entry;
+        element.append(item);
+      });
+    }
+    function openInternshipDetails(job) {
+      selectedInternship = job;
+      document.getElementById('detail-placeholder').hidden = true;
+      document.getElementById('detail-content').hidden = false;
+      document.querySelectorAll('.internship-card').forEach((card) => card.classList.remove('selected'));
+      const selectedCard = document.querySelector(`[data-job-id="${job.id}"]`);
+      if (selectedCard) selectedCard.classList.add('selected');
+      document.getElementById('detail-company').textContent = job.company;
+      document.getElementById('detail-title').textContent = job.title;
+      document.getElementById('detail-meta').textContent = `${job.location} · ${job.workMode} · ${job.duration} · ${job.compensation} · Semesters ${job.minSemester}–${job.maxSemester}${job.startMonth ? ` · Starts ${job.startMonth}` : ''} · Apply by ${job.deadline}`;
+      const experienceMessage = experienceSkillCount(job) ? 'Related experience adds a bonus' : experienceText.trim() ? 'Experience listed' : 'No experience listed; no penalty';
+      document.getElementById('detail-match').textContent = `${job.score}% overall match · ${job.matchingSkills} of ${job.skills.length} skills · Semester eligible · ${experienceMessage}`;
+      document.getElementById('detail-description').textContent = job.description;
+      document.getElementById('detail-skills').textContent = `${job.skills.join(', ')} (minimum proficiency: ${job.requiredSkillLevel})`;
+      document.getElementById('detail-application').textContent = job.application;
+      fillList('detail-responsibilities', job.responsibilities);
+      fillList('detail-requirements', job.requirements);
+      const applied = applications.some((item) => item.id === job.id);
+      document.getElementById('detail-apply').textContent = applied ? 'Applied' : 'Apply now';
+      document.getElementById('detail-apply').disabled = applied;
+      document.getElementById('detail-save').textContent = savedJobs.includes(job.id) ? 'Saved' : 'Save role';
+    }
+    document.getElementById('detail-apply').addEventListener('click', () => {
+      if (!selectedInternship || applications.some((item) => item.id === selectedInternship.id)) return;
+      applications.push({ id: selectedInternship.id, title: selectedInternship.title, company: selectedInternship.company, status: 'Submitted' });
+      localStorage.setItem('internshipSeekersApplications', JSON.stringify(applications));
+      window.location.reload();
+    });
+    document.getElementById('detail-save').addEventListener('click', () => {
+      if (!selectedInternship) return;
+      const updated = savedJobs.includes(selectedInternship.id) ? savedJobs.filter((id) => id !== selectedInternship.id) : [...savedJobs, selectedInternship.id];
+      localStorage.setItem('internshipSeekersSavedJobs', JSON.stringify(updated));
+      window.location.reload();
+    });
+    document.getElementById('saved-count').textContent = savedJobs.length;
+    document.getElementById('application-count').textContent = applications.length;
+    if (applications.length) {
+      document.getElementById('applications-empty').hidden = true;
+      applications.forEach((application) => {
+        const item = document.createElement('li');
+        item.textContent = `${application.title} at ${application.company} — ${application.status}`;
+        document.getElementById('applications-list').append(item);
+      });
+    }
+    document.getElementById('clear-profile').addEventListener('click', () => {
+      ['internshipSeekersProfile', 'internshipSeekersStudentAccount', 'internshipSeekersApplications', 'internshipSeekersSavedJobs'].forEach((key) => localStorage.removeItem(key));
+      sessionStorage.removeItem('internshipSeekersActiveAccount');
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

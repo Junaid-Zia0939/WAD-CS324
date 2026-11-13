@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Build Your Profile | InternshipSeekers</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/plugins/monthSelect/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><img class="brand-mark" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHJzRNlv8xf5Ji1bQKXSVeaSp5lzoGmCeJbFwc-tm4Uw&amp;s" alt="InternshipSeekers icon">InternshipSeekers</a>
+    <nav class="nav"><a href="index.html">Home</a></nav>
+    
+    <div class="header-actions"><a class="button small" href="student-dashboard.html" id="save-exit">Save &amp; Exit</a><button class="button small" id="profile-logout" type="button">Log out</button></div>
+  </header>
+  <main class="main">
+    <form class="form-shell card" id="profile-form">
+      <h1>Create Your Student Profile</h1>
+      <p class="subtitle">Tell employers about your studies, skills, and work.</p>
+      <section>
+        <div class="section-title" id="academic"><h2 id="academic-title">1. Academic Details</h2></div>
+        <div class="form-grid">
+          <div class="field"><label for="first">First Name</label><input id="first" name="first" placeholder="For example: Ayesha" maxlength="40" required><small class="field-error">Please enter a first name.</small></div>
+          <div class="field"><label for="last">Last Name</label><input id="last" name="last" placeholder="For example: Khan" maxlength="40" required><small class="field-error">Please enter a last name.</small></div>
+          <div class="field full"><label for="email">Account Email</label><input id="email" name="email" type="email" maxlength="254" readonly></div>
+          <div class="field"><label for="university">University / Institution</label><input id="university" name="university" placeholder="For example: City University" maxlength="100" required><small class="field-error">Please enter your university or institution.</small></div>
+          <div class="field"><label for="degree">Degree Program</label><input id="degree" name="degree" placeholder="e.g. BS Computer Science" maxlength="100" required><small class="field-error">Please enter your degree program.</small></div>
+          <div class="field"><label for="semester">Semester (1–8)</label><input id="semester" name="semester" type="number" min="1" max="8" step="1" placeholder="Enter 1 to 8" required><small class="field-error">Enter a whole semester number from 1 to 8.</small></div>
+          <div class="field"><label for="graduation">Expected Graduation</label><input id="graduation" name="graduation" type="text" placeholder="Select month and year"></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-title section-spaced"><h2 id="skills-title">2. Structured Skills</h2><p>Enter your category and skill. Enter proficiency from 1 (Beginner) to 3 (Advanced).</p></div>
+        <div id="skills-list">
+        <div class="skill-row">
+          <div class="field"><label for="category-one">Category</label><select id="category-one" name="skills[0][category]"><option value="">Choose a category</option><option>Technology</option><option>Design</option><option>Business</option><option>Communication</option><option>Other</option></select></div>
+          <div class="field"><label for="skill-one">Specific Skill</label><input id="skill-one" name="skills[0][name]" placeholder="Type a skill" maxlength="50"></div>
+          <div class="field"><label for="level-one">Proficiency (1–3)</label><input id="level-one" name="skills[0][level]" type="number" min="1" max="3" step="1" placeholder="1, 2, or 3"><small class="field-error">Enter a whole number from 1 to 3.</small></div>
+          <button class="icon-button remove-skill" type="button">×</button>
+        </div>
+        <div class="skill-row">
+          <div class="field"><label for="category-two">Category</label><select id="category-two" name="skills[1][category]"><option value="">Choose a category</option><option>Technology</option><option>Design</option><option>Business</option><option>Communication</option><option>Other</option></select></div>
+          <div class="field"><label for="skill-two">Specific Skill</label><input id="skill-two" name="skills[1][name]" placeholder="Type a skill" maxlength="50"></div>
+          <div class="field"><label for="level-two">Proficiency (1–3)</label><input id="level-two" name="skills[1][level]" type="number" min="1" max="3" step="1" placeholder="1, 2, or 3"><small class="field-error">Enter a whole number from 1 to 3.</small></div>
+          <button class="icon-button remove-skill" type="button">×</button>
+        </div>
+        </div>
+        <button class="button small" type="button" id="add-skill">+ Add another skill</button>
+      </section>
+      <section>
+        <div class="section-title section-spaced"><h2>3. Experience</h2><p>Previous internships and related projects can improve your matches. This is optional.</p></div>
+        <div class="field"><label for="experience">Previous internships or related projects</label><textarea id="experience" name="experience" rows="4" maxlength="1000" placeholder="For example: Frontend internship using HTML, CSS, and JavaScript"></textarea></div>
+      </section>
+      <section>
+        <div class="section-title section-spaced"><h2>4. Internship Preferences</h2><p>These preferences help us show internships that suit you.</p></div>
+        <div class="form-grid">
+          <div class="field"><label for="preferred-location">Preferred Location</label><input id="preferred-location" name="preferredLocation" placeholder="City or area" maxlength="100"></div>
+          <div class="field"><label for="preferred-work-mode">Preferred Work Setup</label><select id="preferred-work-mode" name="preferredWorkMode"><option value="">No preference</option><option value="Remote">Remote</option><option value="Hybrid">Hybrid</option><option value="On-site">On-site</option></select></div>
+          <div class="field"><label for="available-from">Available From</label><input id="available-from" name="availableFrom" type="text" placeholder="Select month and year"></div>
+        </div>
+      </section>
+      <section id="portfolio">
+        <div class="section-title section-spaced"><h2 id="portfolio-title">5. Portfolio Links</h2></div>
+        <div class="form-grid">
+          <div class="field"><label for="linkedin">LinkedIn URL</label><input id="linkedin" name="linkedin" type="url" placeholder="https://linkedin.com/in/..." maxlength="300"><small class="field-error">Enter a full link starting with https://.</small></div>
+          <div class="field"><label for="github">GitHub URL</label><input id="github" name="github" type="url" placeholder="https://github.com/..." maxlength="300"><small class="field-error">Enter a full link starting with https://.</small></div>
+          <div class="field"><label for="portfolio-url">Personal Portfolio URL</label><input id="portfolio-url" name="portfolio" type="url" placeholder="https://..." maxlength="300"><small class="field-error">Enter a full link starting with https://.</small></div>
+          <div class="field"><label for="resume">Select Resume (PDF)</label><input id="resume" name="resume" type="file" accept="application/pdf"><small class="muted">The prototype records the filename only; it does not upload or store the file.</small></div>
+        </div>
+      </section>
+      <div class="actions"><button class="button" type="submit">Save Profile &amp; Go to Dashboard →</button></div>
+    </form>
+  </main>
+  <footer class="container footer"><div><strong>Help Center</strong><a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=jzia.explorer@gmail.com&amp;su=Profile%20help">Get profile help</a></div><div class="copyright">Internship Seekers by QAU Students · © 2026 InternshipSeekers</div></footer>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/plugins/monthSelect/index.js"></script>
+  <script>
+    const activeAccount = JSON.parse(sessionStorage.getItem('internshipSeekersActiveAccount') || 'null');
+    if (!activeAccount || activeAccount.role !== 'student') window.location.replace('login.html');
+    document.getElementById('profile-logout').addEventListener('click', () => {
+      sessionStorage.removeItem('internshipSeekersActiveAccount');
+      window.location.href = 'login.html';
+    });
+    const profileForm = document.getElementById('profile-form');
+    const skillsList = document.getElementById('skills-list');
+    const storageKey = 'internshipSeekersProfile';
+    const savedProfile = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    const profileFields = ['first', 'last', 'email', 'university', 'degree', 'semester', 'graduation', 'experience', 'preferredLocation', 'preferredWorkMode', 'availableFrom', 'linkedin', 'github', 'portfolio'];
+    profileFields.forEach((name) => {
+      if (profileForm.elements[name] && savedProfile[name]) profileForm.elements[name].value = savedProfile[name];
+    });
+    flatpickr('#graduation', {
+      altInput: true,
+      altFormat: 'F Y',
+      plugins: [new monthSelectPlugin({ dateFormat: 'Y-m', altFormat: 'F Y' })]
+    });
+    flatpickr('#available-from', {
+      altInput: true,
+      altFormat: 'F Y',
+      plugins: [new monthSelectPlugin({ dateFormat: 'Y-m', altFormat: 'F Y' })]
+    });
+    const addSkill = (skill = {}) => {
+      const row = skillsList.querySelector('.skill-row').cloneNode(true);
+      const index = skillsList.querySelectorAll('.skill-row').length;
+      row.querySelectorAll('input, select').forEach((input, position) => {
+        const part = ['category', 'name', 'level'][position];
+        input.id = `${['category', 'skill', 'level'][position]}-${index + 1}`;
+        input.name = `skills[${index}][${part}]`;
+        input.value = skill[part] || '';
+        input.previousElementSibling.htmlFor = input.id;
+      });
+      skillsList.append(row);
+    };
+    [...skillsList.querySelectorAll('.skill-row')].forEach((row, index) => {
+      const skill = savedProfile.skills?.[index];
+      if (skill) ['category', 'name', 'level'].forEach((part, position) => row.querySelectorAll('input, select')[position].value = skill[part] || '');
+    });
+    if (savedProfile.skills?.length > 2) savedProfile.skills.slice(2).forEach(addSkill);
+    document.getElementById('add-skill').addEventListener('click', () => addSkill());
+    skillsList.addEventListener('click', (event) => {
+      if (!event.target.matches('.remove-skill')) return;
+      const rows = skillsList.querySelectorAll('.skill-row');
+      if (rows.length === 1) rows[0].querySelectorAll('input, select').forEach((input) => input.value = '');
+      else event.target.closest('.skill-row').remove();
+    });
+    const saveProfile = () => {
+      const profile = Object.fromEntries(profileFields.map((name) => [name, profileForm.elements[name]?.value.trim() || '']));
+      profile.skills = [...skillsList.querySelectorAll('.skill-row')].map((row) => {
+        const inputs = row.querySelectorAll('input, select');
+        return { category: inputs[0].value.trim(), name: inputs[1].value.trim(), level: inputs[2].value };
+      }).filter((skill) => skill.category || skill.name || skill.level);
+      profile.resumeName = profileForm.elements.resume.files[0]?.name || savedProfile.resumeName || '';
+      localStorage.setItem(storageKey, JSON.stringify(profile));
+    };
+    profileForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      saveProfile();
+      window.location.href = 'student-dashboard.html';
+    });
+    document.getElementById('save-exit').addEventListener('click', saveProfile);
+  </script>
+</body>
+</html>
+
+

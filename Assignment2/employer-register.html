@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employer Sign Up | InternshipSeekers</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="auth-header"><a class="brand" href="index.html"><img class="brand-mark" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHJzRNlv8xf5Ji1bQKXSVeaSp5lzoGmCeJbFwc-tm4Uw&amp;s" alt="InternshipSeekers icon">InternshipSeekers</a><nav class="auth-nav"><a href="index.html">Home</a></nav></header>
+  <main class="container"><section class="form-card card">
+    <h1 id="employer-register-title">Create an Employer Account</h1><p class="subtitle">Create a company account to share internship opportunities.</p>
+    <form id="employer-register-form"><div class="form-grid">
+      <div class="field full"><label for="company">Company Name</label><input id="company" name="company" placeholder="For example: 10Pearls" maxlength="80" required><small class="field-error">Please enter a company name.</small></div>
+      <div class="field"><label for="contact-name">Contact Person</label><input id="contact-name" name="contact" placeholder="For example: Ayesha Khan" maxlength="80" required><small class="field-error">Please enter a contact name.</small></div>
+      <div class="field"><label for="industry">Industry</label><input id="industry" name="industry" placeholder="For example: Technology" maxlength="60" required><small class="field-error">Please enter an industry.</small></div>
+      <div class="field full"><label for="employer-email">Work Email Address</label><input id="employer-email" name="email" type="email" placeholder="name@company.com" maxlength="254" required><small class="field-error">Enter a valid email address.</small></div>
+      <div class="field full"><label for="employer-password">Password (minimum 8 characters)</label><input id="employer-password" name="password" type="password" placeholder="Enter a password" minlength="8" maxlength="128" required><small class="field-error">Use at least 8 characters.</small></div>
+      <div class="field full"><label for="employer-confirm">Confirm Password</label><input id="employer-confirm" name="confirmPassword" type="password" placeholder="Enter your password again" minlength="8" maxlength="128" required><small class="field-error">Enter the password again with at least 8 characters.</small></div>
+    </div><p class="prototype-note" id="employer-register-message"></p><button class="button wide" type="submit">Create Employer Account</button></form>
+    <p class="center muted form-note">Have an account? <a href="login.html">Login</a></p>
+    <p class="center muted">Looking for an internship? <a href="register.html">Create a student account</a></p>
+  </section></main>
+  <footer class="container footer"><div class="copyright">Internship Seekers by QAU Students · © 2026 InternshipSeekers</div></footer>
+  <script>
+    const hashPassword = async (password) => {
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
+      return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+    };
+    document.getElementById('employer-register-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const message = document.getElementById('employer-register-message');
+      if (form.elements.password.value !== form.elements.confirmPassword.value) {
+        message.textContent = 'Passwords do not match.';
+        return;
+      }
+      const email = form.elements.email.value.trim().toLowerCase();
+      const existing = JSON.parse(localStorage.getItem('internshipSeekersEmployerAccount') || 'null');
+      if (existing?.email === email) {
+        message.textContent = 'An account with this email already exists. Log in instead.';
+        return;
+      }
+      const profile = {
+        company: form.elements.company.value.trim(),
+        contact: form.elements.contact.value.trim(),
+        industry: form.elements.industry.value.trim(),
+        email
+      };
+      localStorage.setItem('internshipSeekersEmployerProfile', JSON.stringify(profile));
+      localStorage.setItem('internshipSeekersEmployerAccount', JSON.stringify({ email: profile.email, passwordHash: await hashPassword(form.elements.password.value) }));
+      sessionStorage.setItem('internshipSeekersActiveAccount', JSON.stringify({ role: 'employer', email: profile.email }));
+      window.location.href = 'employer-dashboard.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login | InternshipSeekers</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="auth-header"><a class="brand" href="index.html"><img class="brand-mark" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHJzRNlv8xf5Ji1bQKXSVeaSp5lzoGmCeJbFwc-tm4Uw&amp;s" alt="InternshipSeekers icon">InternshipSeekers</a><nav class="auth-nav"><a href="index.html">Home</a></nav></header>
+  <main class="container"><section class="form-card card">
+    <h1 id="login-title">Welcome Back</h1><p class="subtitle">Log in to continue to your InternshipSeekers account.</p>
+    
+    <form id="login-form"><div class="form-grid">
+      <div class="field full"><label for="account-type">Account Type</label><select id="account-type" name="accountType" required><option value="student">Student</option><option value="employer">Employer</option></select></div>
+      <div class="field full"><label for="email">Email Address</label><input id="email" name="email" type="email" placeholder="name@example.com" maxlength="254" required><small class="field-error">Enter a valid email address.</small></div>
+      <div class="field full"><label for="password">Password</label><input id="password" name="password" type="password" placeholder="Enter your password" maxlength="128" required><small class="field-error">Please enter your password.</small></div>
+    </div><p class="prototype-note" id="login-message"></p><button class="button wide" type="submit">Login</button></form>
+    <p class="center muted form-note">New here? <a href="register.html">Create a student account</a></p>
+    <p class="center muted">Employer? <a href="employer-register.html">Register your company</a></p>
+  </section></main>
+  <script>
+    const hashPassword = async (password) => {
+      const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
+      return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+    };
+    document.getElementById('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const email = form.elements.email.value.trim().toLowerCase();
+      const role = form.elements.accountType.value;
+      const accountKey = role === 'student' ? 'internshipSeekersStudentAccount' : 'internshipSeekersEmployerAccount';
+      const account = JSON.parse(localStorage.getItem(accountKey) || 'null');
+      const message = document.getElementById('login-message');
+      if (!account || account.email !== email || account.passwordHash !== await hashPassword(form.elements.password.value)) {
+        message.textContent = 'Email, password, or account type is incorrect.';
+        return;
+      }
+      sessionStorage.setItem('internshipSeekersActiveAccount', JSON.stringify({ role, email }));
+      window.location.href = role === 'student' ? 'student-dashboard.html' : 'employer-dashboard.html';
+    });
+  </script>
+</body>
+</html>
